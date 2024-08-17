@@ -11,7 +11,7 @@ export class TodoList {
         this.items = items;
     }
 
-    addItem(name: string, index: number, isCompleted: boolean) {
-        this.items.push(new ListItem(name, index, isCompleted))
+    addItem(listItem: {name: string, index: number, isCompleted: boolean}) {
+        this.items.push(new ListItem(listItem.name, listItem.index, listItem.isCompleted))
     }
 }
