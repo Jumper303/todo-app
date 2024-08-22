@@ -1,11 +1,13 @@
-export class ListItem {
+export interface ListItemInterface {
     name: string;
-    index: number;
+    isCompleted: boolean;
+}
+export class ListItem implements ListItemInterface {
+    name: string;
     isCompleted: boolean;
 
-    constructor(name: string, index: number, isCompleted: boolean) {
+    constructor(name: string, isCompleted: boolean) {
         this.name = name;
-        this.index = index;
         this.isCompleted = isCompleted;
     }
 

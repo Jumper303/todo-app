@@ -1,8 +1,15 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { TodoList } from "./todoList";
+import express from 'express';
+import { TodoList } from './todoList';
+const app = express();
+const port = 3001;
 
-const firstTodoList: TodoList = new TodoList("myList", "me", [])
-firstTodoList.addItem({name: "first", index: 0, isCompleted: true});
-firstTodoList.addItem({name: "second", index: 0, isCompleted: false});
+app.get('/getList', async (req, res) => {
+    const todoList: TodoList = new TodoList("myList", "me", [])
+    todoList.appendItem({ name: "first",  isCompleted: false });                     
+    todoList.appendItem({ name: "second", isCompleted: true });   
+    res.status(200).json(JSON.stringify(todoList));
+});
 
-console.log(JSON.stringify(firstTodoList));
+app.listen(port, () => {
+    console.log(`TODO app listening on port ${port}`)
+});
