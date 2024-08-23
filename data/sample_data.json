@@ -1,0 +1,32 @@
+{
+    "lists": [
+        {
+            "name": "firstList",
+            "owner": "me",
+            "items": [
+                {
+                    "name": "first",
+                    "isCompleted": false
+                },
+                {
+                    "name": "second",
+                    "isCompleted": true
+                }
+            ]
+        },
+        {
+            "name": "secondList",
+            "owner": "you",
+            "items": [
+                {
+                    "name": "third",
+                    "isCompleted": false
+                },
+                {
+                    "name": "fifth",
+                    "isCompleted": true
+                }
+            ]
+        }
+    ]
+}
