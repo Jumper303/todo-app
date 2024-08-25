@@ -1,5 +1,0 @@
-wlog
-40m
-20m
-
-todo: fix jest test
