@@ -4,10 +4,12 @@ import { TodoList } from './todoList';
 import bodyParser from 'body-parser';
 
 const app = express();
+import cors from 'cors';
 const port = 3001;
 const todoLists: TodoList[] = [];
 
 app.use(bodyParser.json());
+app.use(cors());
 
 function init() {
     // build model from the stored file
@@ -19,8 +21,9 @@ function init() {
 
 app.post('/lists', async (req, res) => {
     // create new list
-    todoLists.push(new TodoList(req.body.name, req.body.owner, req.body.items))
-    res.status(200).json();
+    const newList = new TodoList(req.body.name, req.body.owner, req.body.items);
+    todoLists.push(newList)
+    res.status(200).json(newList);
 });
 
 app.get('/lists', async (req, res) => {

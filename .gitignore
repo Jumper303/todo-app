@@ -4,3 +4,5 @@
 /build
 coverage/lcov-report
 coverage
+server/node_modules
+server/build

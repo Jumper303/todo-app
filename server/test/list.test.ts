@@ -1,4 +1,4 @@
-import { TodoList } from "../src/todoList";
+import { TodoList } from "../server/src/todoList";
 
 
 
