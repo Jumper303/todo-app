@@ -27,6 +27,20 @@
                     "isCompleted": true
                 }
             ]
+        },
+        {
+            "name": "thirdList",
+            "owner": "you",
+            "items": [
+                {
+                    "name": "sixth",
+                    "isCompleted": true
+                },
+                {
+                    "name": "seventh",
+                    "isCompleted": false
+                }
+            ]
         }
     ]
 }

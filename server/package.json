@@ -20,5 +20,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3",
     "typescript-eslint": "^7.16.1"
+  },
+  "dependencies": {
+    "express-basic-auth": "^1.2.1"
   }
 }

@@ -3,13 +3,15 @@ import lists from '../data/sample_data.json';
 import { TodoList } from './todoList';
 import bodyParser from 'body-parser';
 
+
 const app = express();
 import cors from 'cors';
 const port = 3001;
 const todoLists: TodoList[] = [];
 
 app.use(bodyParser.json());
-app.use(cors());
+
+ app.use(cors({origin: '*'}));
 
 function init() {
     // build model from the stored file
@@ -26,9 +28,15 @@ app.post('/lists', async (req, res) => {
     res.status(200).json(newList);
 });
 
-app.get('/lists', async (req, res) => {
+app.options('/lists', async (req, res) => {
+    res.status(200);
+});
+
+app.get('/lists', 
+ async (req, res) => {
+    console.log(req.headers.authorization);
     // get all lists of the given owner
-    const filteredList = todoLists.filter(o => o.owner == req.query.owner);
+    const filteredList = todoLists.filter(o => o.owner == req.query.owner);    
     res.status(200).json(filteredList);
 });
 

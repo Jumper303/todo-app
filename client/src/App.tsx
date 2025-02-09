@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
-import TableComponent from './table-component';
+import TableComponent from './components/table-component';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        TODO App
-      <TableComponent/>
+        <div className="Title">
+          TODO App
+        </div>
+        <TableComponent/>
       </header>
     </div>
   );
