@@ -34,7 +34,7 @@ app.options('/lists', async (req, res) => {
 
 app.get('/lists', 
  async (req, res) => {
-    console.log(req.headers.authorization);
+    // console.log(req.headers.authorization);
     // get all lists of the given owner
     const filteredList = todoLists.filter(o => o.owner == req.query.owner);    
     res.status(200).json(filteredList);
@@ -45,8 +45,8 @@ app.put('/lists/:id', async (req, res) => {
     const filteredList = todoLists.filter(o => o.id == req.params.id);
     const index = todoLists.indexOf(filteredList[0]);
     if (index >= 0) {
-        todoLists[index].name = req.body.name;
-        todoLists[index].items = req.body.items;
+        todoLists[index].name = req.body.itemData.name;
+        todoLists[index].items = req.body.itemData.items;
         res.status(200).json();
     } else {
         res.status(404).json();
