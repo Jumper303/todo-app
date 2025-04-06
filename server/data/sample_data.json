@@ -39,6 +39,10 @@
                 {
                     "name": "seventh",
                     "isCompleted": false
+                },
+                {
+                    "name": "eigths",
+                    "isCompleted": false
                 }
             ]
         }

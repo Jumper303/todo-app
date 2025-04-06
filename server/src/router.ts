@@ -2,21 +2,24 @@ import express from 'express';
 import lists from '../data/sample_data.json';
 import { TodoList } from './todoList';
 import bodyParser from 'body-parser';
-
+import cors from 'cors';
+import { ListItem, ListItemInterface } from './listItem';
 
 const app = express();
-import cors from 'cors';
 const port = 3001;
 const todoLists: TodoList[] = [];
 
 app.use(bodyParser.json());
-
- app.use(cors({origin: '*'}));
+app.use(cors({origin: '*'}));
 
 function init() {
     // build model from the stored file
     for (const l of lists['lists']) {
-        const todoList: TodoList = new TodoList(l.name, l.owner, l.items);
+        const items: ListItemInterface[] = [];
+        for (const i of l.items) {
+            items.push(new ListItem(i.name, i.isCompleted));
+        }
+        const todoList: TodoList = new TodoList(l.name, l.owner, items);
         todoLists.push(todoList);
     }
 }

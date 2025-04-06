@@ -1,13 +1,13 @@
-import { ListItem } from "./listItem";
+import { ListItem, ListItemInterface } from "./listItem";
 import { getUuid } from "./utils";
 
 export class TodoList {
     id: string;
     name: string;
     owner: string;
-    items: ListItem[];
+    items: ListItemInterface[];
 
-    constructor(name: string, owner: string, items: ListItem[]) {
+    constructor(name: string, owner: string, items: ListItemInterface[]) {
         this.id = getUuid();
         this.name = name;
         this.owner = owner;

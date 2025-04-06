@@ -39,3 +39,30 @@
 .Title {
  color: brown;
 }
+
+.TodoListTitle {
+  background-color: #295bc0;
+}
+
+.TodoList {
+  background-color: #575757;
+}
+
+
+tr:nth-child(even) {
+  background-color: #D6EEEE;
+}
+
+tr:nth-child(odd) {
+  background-color: #839898;
+}
+
+tr {
+  vertical-align: middle;
+}
+
+table {
+  padding: 1px;
+  border-spacing: 1px;
+  border:0pt;
+}
