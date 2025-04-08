@@ -32,7 +32,7 @@ const TableComponent = () => {
         },
         body: JSON.stringify({ itemData })
       }).then(
-          response => response.text()
+        response => response.text()
       ).catch(err => {
         console.log("Error in fetch", err);
       });
@@ -40,20 +40,20 @@ const TableComponent = () => {
   }, [itemData]);
 
 
-  return (    
+  return (
     <div>
-      <br/>
+      <br />
       <b>Select user: </b>
       <select value={userData}
         onChange={e => setUserData(e.target.value)}>
         <option>you</option>
         <option>me</option>
-      </select>   
-      <p></p>   
+      </select>
+      <p></p>
       {
         listData.map((todoList, index) => {
           return (
-            <div key={index}>                          
+            <div key={index}>
               <table>
                 <thead key={index} className='TodoList'><tr><td colSpan={2}>{todoList.name}</td></tr></thead>
                 <tbody>
@@ -61,15 +61,15 @@ const TableComponent = () => {
                     todoList.items.map((e, elementIndex) => {
                       return (<tr key={elementIndex}>
                         <td>
-                          <input type="text" value={e.name} data-name={e.id} id={todoList.id}                           
+                          <input type="text" value={e.name} data-name={e.id} id={todoList.id}
                             onChange={
                               e => {
                                 Object.keys(listData).forEach(function (key) {
                                   // find corresponding list
-                                  if (listData[key]["id"] === e.target.getAttribute('id')) {                                    
+                                  if (listData[key]["id"] === e.target?.getAttribute('id')) {
                                     Object.keys(listData[key]["items"]).forEach(function (secondaryKey) {
                                       // find corresponding item
-                                      if (listData[key]["items"][secondaryKey]["id"] === e.target.getAttribute('data-name')) {
+                                      if (listData[key]["items"][secondaryKey]["id"] === e.target?.getAttribute('data-name')) {
                                         listData[key]["items"][secondaryKey]["name"] = e.currentTarget.value;
 
                                         setItemData({
@@ -77,6 +77,7 @@ const TableComponent = () => {
                                           name: listData[key]["name"],
                                           items: listData[key]["items"]
                                         });
+                                        return;
                                       }
                                     })
                                   }
@@ -84,15 +85,13 @@ const TableComponent = () => {
                               }
                             }
                           />
-                        </td>
-                        <td>
                           <input type="checkbox" checked={e.isCompleted} data-name={e.id} id={todoList.id}
                             onChange={
                               e => {
                                 Object.keys(listData).forEach(function (key) {
-                                  if (listData[key]["id"] === e.target.getAttribute('id')) {
+                                  if (listData[key]["id"] === e.target?.getAttribute('id')) {
                                     Object.keys(listData[key]["items"]).forEach(function (secondaryKey) {
-                                      if (listData[key]["items"][secondaryKey]["id"] === e.target.getAttribute('data-name')) {
+                                      if (listData[key]["items"][secondaryKey]["id"] === e.target?.getAttribute('data-name')) {
                                         listData[key]["items"][secondaryKey]["isCompleted"] = e.target.checked;
 
                                         setItemData({
@@ -100,19 +99,59 @@ const TableComponent = () => {
                                           name: listData[key]["name"],
                                           items: listData[key]["items"]
                                         });
+                                        return;
                                       }
                                     })
                                   }
                                 });
                               }
                             } />
+                          <button data-name={e.id} id={todoList.id}
+                            onClick={removeItem => {
+                              Object.keys(listData).forEach(function (key) {
+                                if (listData[key]["id"] === removeItem.currentTarget?.getAttribute('id')) {
+                                  Object.keys(listData[key]["items"]).forEach(function (secondaryKey) {
+                                    console.log(e.currentTarget?.getAttribute('data-name'));
+                                    if (listData[key]["items"][secondaryKey]["id"] === removeItem.currentTarget?.getAttribute('data-name')) {
+                                      delete listData[key]["items"][secondaryKey];
+
+                                      setItemData({
+                                        id: listData[key]["id"],
+                                        name: listData[key]["name"],
+                                        items: listData[key]["items"]
+                                      });
+                                      return;
+                                    }
+                                  })
+                                }
+                              });
+                            }}
+                          >
+                            X
+                          </button>
                         </td>
                       </tr>)
                     })
                   }
+                  <tr>
+                    <td>
+                      <button id={todoList.id} onClick={newItem => {
+                        Object.keys(listData).forEach(function (key) {
+                          if (listData[key]["id"] === newItem.currentTarget.getAttribute('id')) {
+                            listData[key]["items"].push({ id: Math.floor(Math.random() * 1000000).toString(), name: "", isCompleted: false });
+                            setItemData({
+                              id: listData[key]["id"],
+                              name: listData[key]["name"],
+                              items: listData[key]["items"]
+                            });
+                          }
+                        });
+                      }}>+</button>
+                    </td>
+                  </tr>
                 </tbody>
-              </table>              
-              <br/>
+              </table>
+              <br />
               <p></p>
             </div>);
         })}
