@@ -6,6 +6,7 @@
   "scripts": {
     "server:start": "npm run start --workspace server",
     "client:start": "npm run start --workspace client",
+    "start": "concurrently \"npm run start --workspace server\" \"npm run start --workspace client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "workspaces": [
@@ -13,5 +14,8 @@
     "server"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
 }
