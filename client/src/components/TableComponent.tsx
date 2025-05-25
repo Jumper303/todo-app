@@ -39,9 +39,12 @@ const TableComponent = () => {
     };
   }, [itemData]);
 
-
   return (
     <div>
+      <br />
+      <input id='new_list_name' type='text' disabled />
+      <button disabled>Create new list</button>
+      <br />
       <br />
       <b>Select user: </b>
       <select value={userData}
@@ -54,7 +57,7 @@ const TableComponent = () => {
         listData.map((todoList, index) => {
           return (
             <div key={index}>
-              <table>
+              <table data-testid={todoList.id} data-testlist-name={todoList.name}>
                 <thead key={index} className='TodoList'><tr><td colSpan={2}>{todoList.name}</td></tr></thead>
                 <tbody>
                   {
@@ -62,7 +65,7 @@ const TableComponent = () => {
                       if(e) {
                         return (<tr key={elementIndex}>
                           <td>
-                            <input type="text" value={e.name} data-name={e.id} id={todoList.id}
+                            <input type="text" value={e.name} data-name={e.id} id={todoList.id} data-testid={`${todoList.name}-item-name`} //item name input
                               onChange={
                                 e => {
                                   Object.keys(listData).forEach(function (key) {
@@ -86,7 +89,7 @@ const TableComponent = () => {
                                 }
                               }
                             />
-                            <input type="checkbox" checked={e.isCompleted} data-name={e.id} id={todoList.id}
+                            <input type="checkbox" checked={e.isCompleted} data-name={e.id} id={`${todoList.id}`} //item completion checkbox
                               onChange={
                                 e => {
                                   Object.keys(listData).forEach(function (key) {
@@ -107,7 +110,7 @@ const TableComponent = () => {
                                   });
                                 }
                               } />
-                            <button data-name={e.id} id={todoList.id}
+                            <button data-name={e.id} id={todoList.id} //item delete button
                               onClick={removeItem => {
                                 Object.keys(listData).forEach(function (key) {
                                   if (listData[key]["id"] === removeItem.currentTarget?.getAttribute('id')) {
@@ -137,7 +140,7 @@ const TableComponent = () => {
                   }
                   <tr>
                     <td>
-                      <button id={todoList.id} onClick={newItem => {
+                      <button id={todoList.id} data-testid={`${todoList.name}-add-new-item`} onClick={newItem => { //add new item button
                         Object.keys(listData).forEach(function (key) {
                           if (listData[key]["id"] === newItem.currentTarget.getAttribute('id')) {
                             listData[key]["items"].push({ id: Math.floor(Math.random() * 1000000).toString(), name: "", isCompleted: false });
