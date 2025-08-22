@@ -12,10 +12,10 @@ export class listPage {
   }
 
   async addNewItemToList(listName: string) {
-    let addNewItemButton = this.page.getByTestId(`${listName}-add-new-item`);  
+    let addNewItemButton = this.page.getByTestId(`${listName}-add-new-item`);
     await addNewItemButton.click();
   }
-  
+
   async getListItemValues(listName: string): Promise<string[]> {
     let listId: string = (await this.page
       .locator(`table[data-testlist-name="${listName}"]`)
@@ -49,27 +49,33 @@ export class listPage {
   }
 
   async getListItemInputLocator(
-    listName: string, value: string
+    listName: string,
+    value: string
   ): Promise<Locator> {
-    let itemInputLocator = this.getListItemInputLocatorByValue(
-        listName,
-        ""
-      );
+    let itemInputLocator = this.getListItemInputLocatorByValue(listName, "");
     let inputDataName = await itemInputLocator.getAttribute("data-name");
     return this.page
       .locator(`input[type="text"][data-name="${inputDataName}"]`)
       .first();
   }
 
-  async getCheckboxItemLocatorByInputLocator(inputLocator: Locator): Promise<Locator> {
+  async getCheckboxItemLocatorByInputLocator(
+    inputLocator: Locator
+  ): Promise<Locator> {
     let inputDataName = await inputLocator.getAttribute("data-name");
     return this.page
       .locator(`input[type="checkbox"][data-name="${inputDataName}"]`)
       .first();
   }
 
-  async getRemoveButtonLocatorByInputLocator(inputLocator: Locator): Promise<Locator> {
+  async getRemoveButtonLocatorByInputLocator(
+    inputLocator: Locator
+  ): Promise<Locator> {
     let inputDataName = await inputLocator.getAttribute("data-name");
     return this.page.locator(`button[data-name="${inputDataName}"]`).first();
+  }
+
+  async selectUser(user: string) {
+    await this.page.selectOption('[aria-label="user_select"]', user);
   }
 }

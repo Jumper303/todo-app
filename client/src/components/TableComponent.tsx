@@ -2,11 +2,30 @@ import React, { useEffect, useState } from 'react';
 
 const TableComponent = () => {
   const [listData, setListData] = useState<any[]>([]);
-  const [userData, setUserData] = useState('you');
+  const [userData, setUserData] = useState('John');
   const [itemData, setItemData] = useState({ id: "", name: "", items: [] });
+  const [users, setUsers] = useState<string[]>([]);
+
+  const BASE_URL = 'http://localhost:3001';
 
   useEffect(() => {
-    fetch(`http://localhost:3001/lists?owner=${userData}`, {
+    fetch(`${BASE_URL}/users`, {
+      mode: 'cors',
+    }).then(
+      (response) => {
+        if (!response.ok)
+          throw new Error(response.status.toString());
+        response.json().then((usersResponse) => {
+          setUsers(usersResponse)
+        })
+      }
+    ).catch(err => {
+      console.log("Error in fetch", err);
+    });
+  }, [])
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/lists?owner=${userData}`, {
       mode: 'cors',
     }).then(
       (response) => {
@@ -23,7 +42,7 @@ const TableComponent = () => {
 
   useEffect(() => {
     if (itemData.id) {
-      fetch(`http://localhost:3001/lists/${itemData.id}`, {
+      fetch(`${BASE_URL}/lists/${itemData.id}`, {
         mode: 'cors',
         method: 'PUT',
         headers: {
@@ -38,7 +57,8 @@ const TableComponent = () => {
       });
     };
   }, [itemData]);
-
+  // TODO: split this component into multiple components (list creation, list selection, list item management)
+  // TODO: create new list
   return (
     <div>
       <br />
@@ -47,10 +67,15 @@ const TableComponent = () => {
       <br />
       <br />
       <b>Select user: </b>
-      <select value={userData}
+      <select id="user_select" value={userData} aria-label="user_select"
         onChange={e => setUserData(e.target.value)}>
-        <option>you</option>
-        <option>me</option>
+          {
+            users.map((user, index) => {
+              return (
+                <option key={index}>{user}</option>
+              )
+            })
+          }
       </select>
       <p></p>
       {
@@ -118,7 +143,7 @@ const TableComponent = () => {
                                       console.log(e.currentTarget?.getAttribute('data-name'));
                                       if (listData[key]["items"][secondaryKey] && listData[key]["items"][secondaryKey]["id"] === removeItem.currentTarget?.getAttribute('data-name')) {
                                         delete listData[key]["items"][secondaryKey];
-
+                                        // TODO: call delete endpoint instead of bulk update
                                         setItemData({
                                           id: listData[key]["id"],
                                           name: listData[key]["name"],

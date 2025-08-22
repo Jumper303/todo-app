@@ -2,7 +2,7 @@
     "lists": [
         {
             "name": "firstList",
-            "owner": "me",
+            "owner": "John",
             "items": [
                 {
                     "name": "first",
@@ -16,7 +16,7 @@
         },
         {
             "name": "secondList",
-            "owner": "you",
+            "owner": "Bob",
             "items": [
                 {
                     "name": "third",
@@ -30,7 +30,7 @@
         },
         {
             "name": "thirdList",
-            "owner": "you",
+            "owner": "Bob",
             "items": [
                 {
                     "name": "sixth",
@@ -41,7 +41,17 @@
                     "isCompleted": false
                 },
                 {
-                    "name": "eigths",
+                    "name": "eights",
+                    "isCompleted": false
+                }
+            ]
+        },
+        {
+            "name": "fourthList",
+            "owner": "Sam",
+            "items": [
+                {
+                    "name": "ninth",
                     "isCompleted": false
                 }
             ]

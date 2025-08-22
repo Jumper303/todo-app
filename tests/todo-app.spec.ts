@@ -9,8 +9,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("List item management user flow", async ({ page }) => {
+    // TODO: split test into multiple tests by user actions
     const todoListName: string = "secondList";
     const newItemValue: string = "new item2";
+
+    await testListPage.selectUser("Bob");
 
     let originalTodoListItems = await testListPage.getListItemValues(
         todoListName
@@ -30,6 +33,8 @@ test("List item management user flow", async ({ page }) => {
     await newItemInput.press("Enter");
     await page.reload();
 
+    await testListPage.selectUser("Bob");
+
     let newTodoListItems = await testListPage.getListItemValues(todoListName);
     let expectedTodoListItems = originalTodoListItems.concat([newItemValue]);
     expect(expectedTodoListItems).toEqual(newTodoListItems);
@@ -39,6 +44,8 @@ test("List item management user flow", async ({ page }) => {
     );
     await newItemCheckbox.click();
     await page.reload();
+
+    await testListPage.selectUser("Bob");
 
     let newTodoListCheckboxesStates = await testListPage.getCheckboxStates(
         todoListName
@@ -53,6 +60,8 @@ test("List item management user flow", async ({ page }) => {
     await newItemRemoveButton.click();
     await page.reload();
 
+    await testListPage.selectUser("Bob");
+
     let todoListItemsAfterRemove = await testListPage.getListItemValues(
         todoListName
     );
@@ -62,7 +71,7 @@ test("List item management user flow", async ({ page }) => {
 // get current lists items,
 // add new item to existing list,
 // reload page,
-// get current lists itmes,
+// get current lists items,
 // compare lists,
 
 // complete an item,

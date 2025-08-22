@@ -8,6 +8,7 @@ import { ListItem, ListItemInterface } from './listItem';
 const app = express();
 const port = 3001;
 const todoLists: TodoList[] = [];
+const users: Set<string> = new Set();
 
 app.use(bodyParser.json());
 app.use(cors({origin: '*'}));
@@ -21,6 +22,7 @@ function init() {
         }
         const todoList: TodoList = new TodoList(l.name, l.owner, items);
         todoLists.push(todoList);
+        users.add(l.owner);
     }
 }
 
@@ -42,6 +44,11 @@ app.get('/lists',
     const filteredList = todoLists.filter(o => o.owner == req.query.owner);    
     res.status(200).json(filteredList);
 });
+
+app.get('/users', 
+    async (req, res) => { 
+        res.status(200).json(Array.from(users));
+   });
 
 app.put('/lists/:id', async (req, res) => {
     // update the name and items of a list by id
