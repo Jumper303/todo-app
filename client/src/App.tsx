@@ -8,7 +8,7 @@ function App() {
       <header className="App-header">
         <div className="Title">
           <br/>
-          TODO App
+          <h1>ToDo App</h1>
         </div>
         <TableComponent/>
       </header>

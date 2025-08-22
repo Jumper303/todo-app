@@ -19,6 +19,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
-    "@types/node": "^22.15.3"
+    "@types/node": "^22.15.3",
+    "aws-sdk": "^2.1692.0",
+    "typescript": "^5.8.3",
+    "uuid": "^11.1.0"
   }
 }

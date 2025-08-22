@@ -151,7 +151,7 @@ const TableComponent = () => {
                             });
                           }
                         });
-                      }}>+</button>
+                      }}>Add new item</button>
                     </td>
                   </tr>
                 </tbody>
