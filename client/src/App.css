@@ -42,4 +42,5 @@ table {
   padding: 1px;
   border-spacing: 1px;
   border:0pt;
+  min-width: 300px;
 }
