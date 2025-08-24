@@ -93,8 +93,8 @@ const TableComponent = () => {
   return (
     <div>
       <br />
-      <input id='new_list_name' type='text' />
-      <button onClick={
+      <input id='new_list_name' data-testid='new_list_name' type='text' />
+      <button data-testid='create_new_list' onClick={
         (event) => {
           setNewListData((document.getElementById('new_list_name') as HTMLInputElement).value);
         }
@@ -102,7 +102,7 @@ const TableComponent = () => {
       <br />
       <br />
       <b>Select user: </b>
-      <select id="user_select" value={userData} aria-label="user_select"
+      <select id="user_select" data-testid='user_select' value={userData} aria-label="user_select"
         onChange={e => setUserData(e.target.value)}>
           {
             users.map((user, index) => {

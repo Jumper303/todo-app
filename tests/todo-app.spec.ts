@@ -8,63 +8,56 @@ test.beforeEach(async ({ page }) => {
     await testListPage.gotoPage();
 });
 
+test.afterEach(async ({ page }) => {
+  // TODO: cleanup
+});
+
 test("List item management user flow", async ({ page }) => {
     // TODO: split test into multiple tests by user actions
-    const todoListName: string = "secondList";
-    const newItemValue: string = "new item2";
+    const todoListName: string = `newList-${Date.now()}`;
+    const firstNewItemValue: string = `new item1-${Date.now()}`;
+    const secondNewItemValue: string = `new item2-${Date.now()}`;
 
     await testListPage.selectUser("Bob");
+    let originalListNames: string[] = await testListPage.getListNames();
+    
+    await testListPage.addNewList(todoListName);
+    let newListNames: string[] = await testListPage.getListNames();
 
-    let originalTodoListItems = await testListPage.getListItemValues(
-        todoListName
-    );
-    let originalTodoListCheckboxesStates = await testListPage.getCheckboxStates(
-        todoListName
-    );
+    let expectedListName: string[] = originalListNames.concat([todoListName]);
+    expect(expectedListName).toEqual(newListNames);
+    await testListPage.addNewItemToList(todoListName, firstNewItemValue);
 
-    await testListPage.addNewItemToList(todoListName);
+    let originalTodoListItems = await testListPage.getListItemValues(todoListName);
+    let originalTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
 
-    let newItemInput = await testListPage.getListItemInputLocator(
-        todoListName,
-        ""
-    );
+    await testListPage.addNewItemToList(todoListName, secondNewItemValue);
 
-    await newItemInput.fill(newItemValue);
-    await newItemInput.press("Enter");
-    await page.reload();
-
+    await testListPage.selectUser("John");
     await testListPage.selectUser("Bob");
 
     let newTodoListItems = await testListPage.getListItemValues(todoListName);
-    let expectedTodoListItems = originalTodoListItems.concat([newItemValue]);
+    let expectedTodoListItems = originalTodoListItems.concat([secondNewItemValue]);
     expect(expectedTodoListItems).toEqual(newTodoListItems);
-    // --
-    let newItemCheckbox = await testListPage.getCheckboxItemLocatorByInputLocator(
-        newItemInput
-    );
-    await newItemCheckbox.click();
+
+    await testListPage.checkListCheckbox(todoListName, secondNewItemValue);
     await page.reload();
 
     await testListPage.selectUser("Bob");
 
-    let newTodoListCheckboxesStates = await testListPage.getCheckboxStates(
-        todoListName
-    );
+    let newTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
     let expectedTodoListCheckboxesStates = originalTodoListCheckboxesStates;
 
     expectedTodoListCheckboxesStates.push(true);
     expect(expectedTodoListCheckboxesStates).toEqual(newTodoListCheckboxesStates);
+
     // --
-    let newItemRemoveButton =
-        await testListPage.getRemoveButtonLocatorByInputLocator(newItemInput);
-    await newItemRemoveButton.click();
+    await testListPage.removeListItem(todoListName, secondNewItemValue);
     await page.reload();
 
     await testListPage.selectUser("Bob");
 
-    let todoListItemsAfterRemove = await testListPage.getListItemValues(
-        todoListName
-    );
+    let todoListItemsAfterRemove = await testListPage.getListItemValues(todoListName);
     expect(originalTodoListItems).toEqual(todoListItemsAfterRemove);
 });
 
