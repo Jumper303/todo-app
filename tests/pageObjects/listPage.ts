@@ -2,15 +2,24 @@ import { Locator, Page } from "@playwright/test";
 
 export class listPage {
   readonly page: Page;
+  readonly newListNameInput: Locator;
+  readonly createNewListButton: Locator;
+  readonly listTable = (listName: string) => this.page.locator(`table[data-testlist-name="${listName}"]`);
 
   constructor(page: Page) {
     this.page = page;
+    this.newListNameInput = page.getByTestId("new_list_name");
+    this.createNewListButton = page.getByTestId("create_new_list");
   }
 
   async gotoPage() {
     await this.page.goto("/");
   }
 
+  async getListId(listName: string): Promise<string> {
+    return (await this.listTable(listName).getAttribute("data-testid")) as string;
+  }
+  
   async addNewItemToList(listName: string, itemName: string) {
     let addNewItemButton = this.page.getByTestId(`${listName}-add-new-item`);
     await addNewItemButton.click();
@@ -22,17 +31,15 @@ export class listPage {
   }
 
   async addNewList(newListName: string) {
-    this.page.getByTestId("new_list_name").fill(newListName);
-    let addNewListButton = this.page.getByTestId("create_new_list");
-    const addListPromise = this.page.waitForResponse(response => response.url().includes("/lists") && response.request().method() === "POST");
-    await addNewListButton.click();
+    this.newListNameInput.fill(newListName);
+    const addListPromise = this.page.waitForResponse(
+      (response) => response.url().includes("/lists") && response.request().method() === "POST"
+    );
+    await this.createNewListButton.click();
     await addListPromise;
   }
 
   async getListItemValues(listName: string): Promise<string[]> {
-    let listId: string = (await this.page
-      .locator(`table[data-testlist-name="${listName}"]`)
-      .getAttribute("data-testid")) as string;
     let listItems = await Promise.all(
       (
         await this.page.getByTestId(`${listName}-item-name`).all()
@@ -43,9 +50,7 @@ export class listPage {
   }
 
   async getCheckboxStates(listName: string): Promise<boolean[]> {
-    let listId: string = (await this.page
-      .locator(`table[data-testlist-name="${listName}"]`)
-      .getAttribute("data-testid")) as string;
+    let listId: string = await this.getListId(listName);  
     let checkboxStates = await Promise.all(
       (
         await this.page.locator(`input[type="checkbox"][id="${listId}"]`).all()
@@ -61,35 +66,28 @@ export class listPage {
       .first();
   }
 
-  async getListItemInputLocator(
-    listName: string,
-    value: string
-  ): Promise<Locator> {
+  async getListItemInputLocator(listName: string, value: string): Promise<Locator> {
     let itemInputLocator = this.getListItemInputLocatorByValue(listName, value);
     let inputDataName = await itemInputLocator.getAttribute("data-name");
-    return this.page
-      .locator(`input[type="text"][data-name="${inputDataName}"]`)
-      .first();
+    return this.page.locator(`input[type="text"][data-name="${inputDataName}"]`).first();
   }
 
-  async getCheckboxItemLocatorByInputLocator(
-    inputLocator: Locator
-  ): Promise<Locator> {
+  async getCheckboxItemLocatorByInputLocator(inputLocator: Locator): Promise<Locator> {
     let inputDataName = await inputLocator.getAttribute("data-name");
-    return this.page
-      .locator(`input[type="checkbox"][data-name="${inputDataName}"]`)
-      .first();
+    return this.page.locator(`input[type="checkbox"][data-name="${inputDataName}"]`).first();
   }
 
-  async getRemoveButtonLocatorByInputLocator(
-    inputLocator: Locator
-  ): Promise<Locator> {
+  async getRemoveButtonLocatorByInputLocator(inputLocator: Locator): Promise<Locator> {
     let inputDataName = await inputLocator.getAttribute("data-name");
     return this.page.locator(`button[data-name="${inputDataName}"]`).first();
   }
 
   async selectUser(user: string) {
+    const getListPromise = this.page.waitForResponse(
+      (response) => response.url().includes("/lists") && response.request().method() === "GET"
+    );
     await this.page.selectOption('[aria-label="user_select"]', user);
+    await getListPromise;
   }
 
   async getListNames(): Promise<string[]> {
@@ -105,17 +103,32 @@ export class listPage {
 
   async checkListCheckbox(listName: string, listItemValue: string) {
     let itemInput = await this.getListItemInputLocator(listName, listItemValue);
-    let newItemCheckbox = await this.getCheckboxItemLocatorByInputLocator(
-      itemInput
-    );
+    let newItemCheckbox = await this.getCheckboxItemLocatorByInputLocator(itemInput);
     await newItemCheckbox.click();
   }
 
   async removeListItem(listName: string, listItemValue: string) {
     let itemInput = await this.getListItemInputLocator(listName, listItemValue);
-    let newItemRemoveButton = await this.getRemoveButtonLocatorByInputLocator(
-      itemInput
-    );
+    let newItemRemoveButton = await this.getRemoveButtonLocatorByInputLocator(itemInput);
     await newItemRemoveButton.click();
+  }
+
+  async removeList(listName: string) {
+    let listId: string = await this.getListId(listName); 
+    const removeListPromise = this.page.waitForResponse(
+      (response) => response.url().includes("/lists") && response.request().method() === "DELETE"
+    );
+    await this.page.getByTestId(`${listId}-delete-list`).click();
+    await removeListPromise;
+  }
+
+  async removeAllTestLists(): Promise<void> {
+    let listNames: string[] = await this.getListNames();
+    for (const listName of listNames) {
+      if (listName.startsWith("newList")) {
+        // cleanup created lists if needed
+        await this.removeList(listName);
+      }
+    }
   }
 }

@@ -6,7 +6,9 @@
   "scripts": {
     "server:start": "npm run start --workspace server",
     "client:start": "npm run start --workspace client",
-    "start": "concurrently \"npm run start --workspace server\" \"npm run start --workspace client\""
+    "start": "concurrently \"npm run start --workspace server\" \"npm run start --workspace client\"",
+    "test": "npx playwright test",
+    "burn-in": "npx playwright test --project=chromium --repeat-each=5 --retries=0"
   },
   "workspaces": [
     "client",

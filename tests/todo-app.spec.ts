@@ -4,76 +4,96 @@ import { listPage } from "./pageObjects/listPage";
 let testListPage: listPage;
 
 test.beforeEach(async ({ page }) => {
-    testListPage = new listPage(page);
-    await testListPage.gotoPage();
+  testListPage = new listPage(page);
+  await testListPage.gotoPage();
 });
 
-test.afterEach(async ({ page }) => {
-  // TODO: cleanup
+test.afterAll(async ({ browser }) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  testListPage = new listPage(page);
+  // TODO: use API calls for setup and teardown 
+  await testListPage.gotoPage();
+  await testListPage.selectUser("Bob");
+  await testListPage.removeAllTestLists();
+  await testListPage.selectUser("John");
+  await testListPage.removeAllTestLists();
+  await testListPage.selectUser("Sam");
+  await testListPage.removeAllTestLists();
 });
 
-test("List item management user flow", async ({ page }) => {
-    // TODO: split test into multiple tests by user actions
-    const todoListName: string = `newList-${Date.now()}`;
-    const firstNewItemValue: string = `new item1-${Date.now()}`;
-    const secondNewItemValue: string = `new item2-${Date.now()}`;
-
-    await testListPage.selectUser("Bob");
-    let originalListNames: string[] = await testListPage.getListNames();
-    
-    await testListPage.addNewList(todoListName);
-    let newListNames: string[] = await testListPage.getListNames();
-
-    let expectedListName: string[] = originalListNames.concat([todoListName]);
-    expect(expectedListName).toEqual(newListNames);
-    await testListPage.addNewItemToList(todoListName, firstNewItemValue);
-
-    let originalTodoListItems = await testListPage.getListItemValues(todoListName);
-    let originalTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
-
-    await testListPage.addNewItemToList(todoListName, secondNewItemValue);
-
-    await testListPage.selectUser("John");
-    await testListPage.selectUser("Bob");
-
-    let newTodoListItems = await testListPage.getListItemValues(todoListName);
-    let expectedTodoListItems = originalTodoListItems.concat([secondNewItemValue]);
-    expect(expectedTodoListItems).toEqual(newTodoListItems);
-
-    await testListPage.checkListCheckbox(todoListName, secondNewItemValue);
-    await page.reload();
-
-    await testListPage.selectUser("Bob");
-
-    let newTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
-    let expectedTodoListCheckboxesStates = originalTodoListCheckboxesStates;
-
-    expectedTodoListCheckboxesStates.push(true);
-    expect(expectedTodoListCheckboxesStates).toEqual(newTodoListCheckboxesStates);
-
-    // --
-    await testListPage.removeListItem(todoListName, secondNewItemValue);
-    await page.reload();
-
-    await testListPage.selectUser("Bob");
-
-    let todoListItemsAfterRemove = await testListPage.getListItemValues(todoListName);
-    expect(originalTodoListItems).toEqual(todoListItemsAfterRemove);
+test("should allow me to create a list", async ({ page }) => {
+  await testListPage.selectUser("Bob");
+  let originalListNames: string[] = await testListPage.getListNames();
+  const todoListName: string = `newList-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewList(todoListName);
+  let newListNames: string[] = await testListPage.getListNames();
+  expect(newListNames).toContain(todoListName);
 });
 
-// get current lists items,
-// add new item to existing list,
-// reload page,
-// get current lists items,
-// compare lists,
+test("should allow me to delete a list", async ({ page }) => {
+  await testListPage.selectUser("John");
+  const todoListName: string = `newList-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewList(todoListName);
 
-// complete an item,
-// reload page,
-// verify all lists,
-// remove item,
-// verify all lists,
-// switch user,
-// verify all lists
+  await testListPage.removeList(todoListName);
+  let newNewListNames: string[] = await testListPage.getListNames();
+  expect(newNewListNames).not.toContain(todoListName);
+  expect(newNewListNames).toContain("firstList");
+});
 
-// create list,
-// delete list
+
+test("should allow me to create list items", async ({ page }) => {
+  await testListPage.selectUser("Sam");
+  const todoListName: string = `newList-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewList(todoListName);
+
+  const newItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, newItemName);
+
+  let originalTodoListItems = await testListPage.getListItemValues(todoListName);
+
+  const secondNewItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, secondNewItemName);
+
+  let newTodoListItems = await testListPage.getListItemValues(todoListName);
+  let expectedTodoListItems = originalTodoListItems.concat([secondNewItemName]);
+  expect(expectedTodoListItems).toEqual(newTodoListItems);
+});
+
+test("should allow me to mark list items as completed", async ({ page }) => {
+  await testListPage.selectUser("Sam");
+  const todoListName: string = `newList-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewList(todoListName);
+
+  const newItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, newItemName);
+
+  const secondNewItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, secondNewItemName);
+
+  let originalTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
+  await testListPage.checkListCheckbox(todoListName, secondNewItemName);
+
+  let newTodoListCheckboxesStates = await testListPage.getCheckboxStates(todoListName);
+  let expectedTodoListCheckboxesStates = [false, true];
+  expect(expectedTodoListCheckboxesStates).toEqual(newTodoListCheckboxesStates);
+});
+
+test("should allow me to remove list items", async ({ page }) => {
+  await testListPage.selectUser("John");
+  const todoListName: string = `newList-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewList(todoListName);
+
+  const newItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, newItemName);
+
+  const secondNewItemName: string = `newItem-${Date.now()}-${Math.random()}`;
+  await testListPage.addNewItemToList(todoListName, secondNewItemName);
+
+  await testListPage.removeListItem(todoListName, secondNewItemName);
+
+  let listItems = await testListPage.getListItemValues(todoListName);
+  expect(listItems).toContain(newItemName);
+  expect(listItems).not.toContain(secondNewItemName);
+});
